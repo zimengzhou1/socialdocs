@@ -2,6 +2,9 @@ var PORT = process.env.PORT || 3000;
 const express = require('express');
 const app = express();
 
+var http = require('http');
+var server = http.Server(app);
+
 //set template engine ejs
 app.set('view engine', 'ejs');
 
@@ -14,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 //Listen on port 3000 or whatever the hell heroku does
-server = app.listen(PORT);
+server.listen(PORT);
 
 //socket.io instantiation
 const io = require("socket.io")(server)
