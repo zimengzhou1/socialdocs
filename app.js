@@ -1,3 +1,4 @@
+var PORT = process.env.PORT || 3000;
 const express = require('express');
 const app = express();
 
@@ -12,8 +13,8 @@ app.get('/', (req, res) => {
     res.render('index')
 });
 
-//Listen on port 3000
-server = app.listen(3000);
+//Listen on port 3000 or whatever the hell heroku does
+server = app.listen(PORT);
 
 //socket.io instantiation
 const io = require("socket.io")(server)
