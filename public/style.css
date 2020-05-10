@@ -1,0 +1,37 @@
+  html {
+      height: 100%;
+  }
+  
+  body {
+      margin: 0px;
+      height: 100%;
+  }
+  
+  header {
+      text-align: center;
+  }
+
+  p {
+    color: black;
+    font-family: "cursive";
+    margin: 8px;
+  }
+
+  .fb-post {
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    position: absolute;
+    top: 200px;
+    left: 50%;
+  }
+
+
+  /*
+  .message:nth-child(even) {
+      background-color: #81DAF5;
+  }
+  
+  .message:nth-child(odd) {
+      background-color: #81BEF7;
+  }
+  */
