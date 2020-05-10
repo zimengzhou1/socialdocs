@@ -4,7 +4,7 @@ $(function() {
   const MAX_CHARS = "40";
 
   // Make connection
-  var socket = io.connect('http://localhost:3000');
+  var socket = io();//.connect('http://localhost:3000');
   var ids = [];
 
   // Generates a unique ID for new elements
