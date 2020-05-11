@@ -12,15 +12,33 @@ $(function() {
     return Math.round(new Date().getTime() + (Math.random() * 100));
   }
 
-  // Callback function that removes id
+  // Callback function that removes element
   function removeTag(id) {
-    console.log("hi");
-
     if (ids.includes(id)) {
+      console.log("Removed bc empty.");
       document.getElementById(id).remove();
       ids = ids.filter(e => e !== id);
     } else {
       return;
+    }
+  }
+
+  // If previous element is empty, remove it
+  function isPreviousEmpty(list) {
+    if (list.length > 1) {
+      var value = document.getElementById(list[list.length - 2]).value;
+      if (value === "") {
+        console.log("Element is empty")
+        removeTag(list[list.length - 2]);
+      }
+    }
+  }
+
+  // Maintains maximum number of messages shown per user
+  function maxMessages(list) {
+    if (list.length > MAX_MESSAGES) {
+      document.getElementById(list[0]).remove();
+      list.shift();
     }
   }
 
@@ -56,27 +74,15 @@ $(function() {
       
       // User is typing a message
       $("#" + tag.id).keyup(function() {
-        console.log("pressing")
+        console.log("Pressing")
         var value = tag.value;
         var iden = tag.id;
         socket.emit('new_message', {inputToAdd : value, id: iden})
       })
     }
 
-    if (ids.length > 1) {
-      var value = document.getElementById(ids[ids.length - 2]).value;
-      if (value === "") {
-        console.log("empty")
-        //document.getElementById(ids[ids.length - 2]).remove();
-        removeTag(ids[ids.length - 2]);
-      }
-    }
-
-    if (ids.length > MAX_MESSAGES) {
-      document.getElementById(ids[0]).remove();
-      ids.shift();
-    }
-         
+    isPreviousEmpty(ids);
+    maxMessages(ids);   
   })
 
     /*
@@ -85,13 +91,25 @@ $(function() {
     })
     */
 
-   function removePara(id) {
-    document.getElementById(id).remove();
-   }
+   var recievedmsgs = [];
+
+  // Callback function that removes element
+  function removeElem(id) {
+    if (recievedmsgs.includes(id)) {
+      console.log("Removed bc empty.");
+      document.getElementById(id).remove();
+      recievedmsgs = recievedmsgs.filter(e => e !== id);
+    } else {
+      return;
+    }
+  }
+
    //Listening for new_position
    socket.on("new_position", (data) => {
+     recievedmsgs.push(data.id);
       var display = $("<p>|</p>").attr("id", data.id)
       console.log('Current ID is: ' + display.attr('id'));
+      console.log(recievedmsgs);
       
       $("body").append(
          $(display).css({
@@ -101,8 +119,18 @@ $(function() {
          }))
 
     setTimeout(() => {
-      removePara(data.id);
+      removeElem(data.id);
     }, DISPLAY_TIME);
+
+    // If previous element is empty, remove it
+    if (recievedmsgs.length > 1) {
+      var value = document.getElementById(recievedmsgs[recievedmsgs.length - 2]).textContent;
+      if (value === "|") {
+        removeElem(recievedmsgs[recievedmsgs.length - 2]);
+      }
+    }
+
+    maxMessages(recievedmsgs);
    })
    
    //Listening for new_message (typing)
