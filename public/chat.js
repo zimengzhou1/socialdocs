@@ -1,11 +1,16 @@
 $(function() {
   const MAX_MESSAGES = 3;
-  const DISPLAY_TIME = 15000;
+  const DISPLAY_TIME = 5000;
   const MAX_CHARS = "40";
 
   // Make connection
   var socket = io();//.connect('http://localhost:3000');
-  var ids = [];
+  var sentmsgs = [];
+  var recievedmsgs = [];
+  var stimeout;
+  var rtimeout;
+
+  // ---------------------- HELPER FUNCTIONS ----------------------------------------------
 
   // Generates a unique ID for new elements
   function uniqId() {
@@ -14,10 +19,10 @@ $(function() {
 
   // Callback function that removes element
   function removeTag(id) {
-    if (ids.includes(id)) {
+    if (sentmsgs.includes(id)) {
       console.log("Removed bc empty.");
       document.getElementById(id).remove();
-      ids = ids.filter(e => e !== id);
+      sentmsgs = sentmsgs.filter(e => e !== id);
     } else {
       return;
     }
@@ -42,6 +47,8 @@ $(function() {
     }
   }
 
+    // ---------------------- EMITTED MESSAGES ---------------------------------------------
+
   document.body.addEventListener('click', event => {   
     const clicked = document.elementFromPoint(event.clientX, event.clientY)
     
@@ -51,11 +58,13 @@ $(function() {
       const tag = document.createElement('input');
       tag.id = uniqId();
       //tag.setAttribute("maxlength", MAX_CHARS)
+      /*
       setTimeout(() => {
         removeTag(tag.id);
       }, DISPLAY_TIME);
-      ids.push(tag.id);
-      console.log(ids);
+      */
+      sentmsgs.push(tag.id);
+      console.log(sentmsgs);
 
       tag.style.cssText = `
         position: absolute;
@@ -66,23 +75,27 @@ $(function() {
         border: none;
         outline: none;
         font-family: 'Noto Serif', serif;
-
       `
       document.body.append(tag)
       tag.focus()
       socket.emit('new_position', {left : event.clientX, top : event.clientY, id : tag.id});
       
+      
       // User is typing a message
       $("#" + tag.id).keyup(function() {
+        clearTimeout(stimeout);
         console.log("Pressing")
         var value = tag.value;
         var iden = tag.id;
+        stimeout = setTimeout(() => {
+          removeTag(tag.id);
+        }, DISPLAY_TIME);
         socket.emit('new_message', {inputToAdd : value, id: iden})
       })
     }
 
-    isPreviousEmpty(ids);
-    maxMessages(ids);   
+    isPreviousEmpty(sentmsgs);
+    maxMessages(sentmsgs);   
   })
 
     /*
@@ -91,7 +104,9 @@ $(function() {
     })
     */
 
-   var recievedmsgs = [];
+   
+
+  // ---------------------- LISTEN TO MESSAGES ---------------------------------------------
 
   // Callback function that removes element
   function removeElem(id) {
@@ -117,10 +132,11 @@ $(function() {
             left: data.left,
             top: data.top
          }))
-
+    /*
     setTimeout(() => {
       removeElem(data.id);
     }, DISPLAY_TIME);
+    */
 
     // If previous element is empty, remove it
     if (recievedmsgs.length > 1) {
@@ -135,7 +151,11 @@ $(function() {
    
    //Listening for new_message (typing)
    socket.on("new_message", (data) => {
-      $("#" + data.id).text(data.inputToAdd);
+    clearTimeout(rtimeout);
+    $("#" + data.id).text(data.inputToAdd);
+    rtimeout = setTimeout(() => {
+      removeElem(data.id);
+    }, DISPLAY_TIME);
    })
    
 });
