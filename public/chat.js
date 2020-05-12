@@ -12,6 +12,7 @@ $(function() {
 
   // Prompt for setting a username
   var username;
+  var usernames = [];
   var connected = false;
   var $currentInput = $usernameInput.focus();
 
@@ -265,13 +266,19 @@ $(function() {
    })
 
   socket.on('user joined', (data) => {
-    console.log("came here")
-    log(data.username);
+    for (i = 0; i < data.usernames.length; i++) {
+      if (!(usernames.indexOf(data.usernames[i]) >= 0)) {
+        usernames.push(data.usernames[i]);
+        log(data.usernames[i]);
+      }
+      
+    }
     //addParticipantsMessage(data);
   });
 
   socket.on('user left', (data) => {
     $("#" + data.username).remove()
+    usernames = usernames.filter(e => e !== data.username);
     //log(data.username + ' left');
     //addParticipantsMessage(data);
     //removeChatTyping(data);

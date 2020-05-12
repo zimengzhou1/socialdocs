@@ -23,6 +23,7 @@ server.listen(PORT);
 const io = require("socket.io")(server)
 
 var numUsers = 0;
+var usernames = [];
 
 //listen on every connection
 io.on('connection', (socket) => {
@@ -35,6 +36,7 @@ io.on('connection', (socket) => {
         // we store the username in the socket session for this client
         socket.username = username;
         ++numUsers;
+        usernames.push(username);
         addedUser = true;
         
         // Client will send the "people online" message (quite redundant) and verify connected status
@@ -45,7 +47,8 @@ io.on('connection', (socket) => {
         // echo globally that a person has connected
         io.sockets.emit('user joined', {
         username: socket.username,
-        numUsers: numUsers
+        numUsers: numUsers,
+        usernames: usernames
         });
     });
 
@@ -65,6 +68,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (addedUser) {
           --numUsers;
+          usernames = usernames.filter(e => e !== socket.username);
     
           socket.broadcast.emit('user left', {
             username: socket.username,
