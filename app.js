@@ -22,12 +22,34 @@ server.listen(PORT);
 //socket.io instantiation
 const io = require("socket.io")(server)
 
+var numUsers = 0;
 
 //listen on every connection
 io.on('connection', (socket) => {
     console.log('New user connected')
 
-    //listen on new_message
+    var addedUser = false;
+    socket.on('add user', (username) => {
+        if (addedUser) return;
+
+        // we store the username in the socket session for this client
+        socket.username = username;
+        ++numUsers;
+        addedUser = true;
+        
+        // Client will send the "people online" message (quite redundant) and verify connected status
+        socket.emit('login', {
+        numUsers: numUsers
+        });
+        console.log("reached here")
+        // echo globally that a person has connected
+        io.sockets.emit('user joined', {
+        username: socket.username,
+        numUsers: numUsers
+        });
+    });
+
+    //listen on new_message (typing)
     socket.on('new_message', (data) => {
         //broadcast the new message
         console.log(data);
@@ -40,6 +62,17 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('new_position', {left : data.left, top : data.top, id : data.id})
     })
 
+    socket.on('disconnect', () => {
+        if (addedUser) {
+          --numUsers;
+    
+          socket.broadcast.emit('user left', {
+            username: socket.username,
+            numUsers: numUsers
+          });
+        }
+      });
+    /*
     //listen on typing
     socket.on('typing', (data) => {
         console.log(data);
@@ -50,4 +83,5 @@ io.on('connection', (socket) => {
     socket.on('nottyping', () => {
     	socket.broadcast.emit('nottyping')
     })
+    */
 })

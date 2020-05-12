@@ -5,23 +5,30 @@
     <link rel="stylesheet" type="text/css" href="style.css" >
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <meta charset="utf-8">
     <title>socialdocs v2</title>
   </head>
 
   <body>
-    
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" 
-    src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v6.0"></script>
-    <header>
-      <h1>Social Docs V2</h1>
-    </header>
+    <ul class="pages">
+      <li class="chat page">
+        <header>
+          <h1>Social Docs V2</h1>
+        </header>
 
-    
-    <div class="fb-post" 
-        data-href="https://www.facebook.com/edifess/posts/834046013770034"
-        data-width="500"></div>
+        <span class="usersOnline">
+          <ul class="messages"></ul>
+        </span>
 
+        <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fedifess%2Fposts%2F847640669077235&show_text=true&width=552&appId=2865257026855257&height=205" width="552" height="205" style="border:none;overflow:hidden" scrolling="yes" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
+      </li>
+      <li class="login page">
+        <div class="form">
+          <h3 class="title">What's your name?</h3>
+          <input class="usernameInput" type="text" maxlength="14" />
+        </div>
+      </li>
+    </ul>
 
     <script src="https://code.jquery.com/jquery.min.js"></script>
     <script src="chat.js"></script>
