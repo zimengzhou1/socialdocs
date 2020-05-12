@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
     socket.on('new_message', (data) => {
         //broadcast the new message
         console.log(data);
-        socket.broadcast.emit('new_message', {inputToAdd : data.inputToAdd, id: data.id});
+        socket.broadcast.emit('new_message', {inputToAdd : data.inputToAdd, id: data.id, username: data.username});
     })
 
     socket.on('new_position', (data) => {

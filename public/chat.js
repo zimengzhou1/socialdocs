@@ -3,6 +3,11 @@ $(function() {
   const DISPLAY_TIME = 15000;
   const MAX_CHARS = "40";
   var FADE_TIME = 150;
+  var COLORS = [
+    '#e21400', '#91580f', '#f8a700', '#f78b00',
+    '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
+    '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
+  ];
 
   var $window = $(window);
   var $messages = $('.messages');
@@ -71,9 +76,21 @@ $(function() {
     return Math.round(new Date().getTime() + (Math.random() * 100));
   }
 
+  // Gets the color of a username through our hash function
+  const getUsernameColor = (username) => {
+    // Compute hash code
+    var hash = 7;
+    for (var i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + (hash << 5) - hash;
+    }
+    // Calculate color
+    var index = Math.abs(hash % COLORS.length);
+    return COLORS[index];
+  }
+
   // Log a message
   const log = (message, options) => {
-    var $el = $('<li>').addClass('log').attr("id", message).text(message);
+    var $el = $('<li>').addClass('log').attr("id", message).text(message).css('color', getUsernameColor(message));
     addMessageElement($el, options);
   }
 
@@ -168,6 +185,8 @@ $(function() {
         outline: none;
         font-family: 'Noto Serif', serif;
       `
+      tag.style.color = getUsernameColor(username);
+
       document.body.append(tag)
       tag.focus()
       socket.emit('new_position', {left : event.clientX, top : event.clientY, id : tag.id});
@@ -183,7 +202,7 @@ $(function() {
         var stimeout = setTimeout(() => {
           removeTag(tag.id);
         }, DISPLAY_TIME);
-        socket.emit('new_message', {inputToAdd : value, id: iden})
+        socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
       })
     }
 
@@ -206,7 +225,8 @@ $(function() {
     connected = true;
     // Display the welcome message
     var message = "People Online:";
-    addMessageElement($('<li>').addClass('log').text(message), {prepend: true});
+    var $li = $('<li>').addClass('log').text(message).css('font-weight', 'bold');
+    addMessageElement($li, {prepend: true});
     /*
     log(message, {
       prepend: true
@@ -258,8 +278,9 @@ $(function() {
    
    //Listening for new_message (typing)
    socket.on("new_message", (data) => {
+    console.log(data.username);
     clearTimeout(rtimeout);
-    $("#" + data.id).text(data.inputToAdd);
+    $("#" + data.id).text(data.inputToAdd).css('color', getUsernameColor(data.username));
     var rtimeout = setTimeout(() => {
       removeElem(data.id);
     }, DISPLAY_TIME);
