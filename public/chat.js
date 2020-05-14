@@ -1,5 +1,6 @@
 $(function() {
-  const MAX_MESSAGES = 3;
+  const MAX_MESSAGES_SENT = 3;
+  const MAX_MESSAGES_RECV = 6;
   const DISPLAY_TIME = 15000;
   const MAX_CHARS = "40";
   var FADE_TIME = 150;
@@ -148,8 +149,8 @@ $(function() {
   }
 
   // Maintains maximum number of messages shown per user
-  function maxMessages(list) {
-    if (list.length > MAX_MESSAGES) {
+  function maxMessages(list, maxNum) {
+    if (list.length > maxNum) {
       document.getElementById(list[0]).remove();
       list.shift();
     }
@@ -207,7 +208,7 @@ $(function() {
     }
 
     isPreviousEmpty(sentmsgs);
-    maxMessages(sentmsgs);   
+    maxMessages(sentmsgs, MAX_MESSAGES_SENT);   
   })
 
     /*
@@ -273,7 +274,7 @@ $(function() {
       }
     }
 
-    maxMessages(recievedmsgs);
+    maxMessages(recievedmsgs, MAX_MESSAGES_RECV);
    })
    
    //Listening for new_message (typing)
