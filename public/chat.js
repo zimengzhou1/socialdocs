@@ -1,6 +1,7 @@
 $(function() {
   const MAX_MESSAGES_SENT = 3;
-  const MAX_MESSAGES_RECV = 6;
+  //total displayed messages
+  const MAX_MESSAGES_RECV = 30;
   const DISPLAY_TIME = 15000;
   const MAX_CHARS = "40";
   var FADE_TIME = 150;
@@ -151,6 +152,7 @@ $(function() {
   // Maintains maximum number of messages shown per user
   function maxMessages(list, maxNum) {
     if (list.length > maxNum) {
+      socket.emit('remove elem', {idValue : list[0]});
       document.getElementById(list[0]).remove();
       list.shift();
     }
@@ -167,6 +169,7 @@ $(function() {
     } else {
       const tag = document.createElement('input');
       tag.id = uniqId();
+      //tag.onkeypress = this.style.width = ((this.value.length + 1) * 8) + 'px';
       //tag.setAttribute("maxlength", MAX_CHARS)
       /*
       setTimeout(() => {
@@ -180,12 +183,12 @@ $(function() {
         position: absolute;
         top: ${event.clientY}px;
         left: ${event.clientX}px;
-        width: 300px;
+        width: 80px;
         background: transparent;
         border: none;
-        outline: none;
         font-family: 'Noto Serif', serif;
       `
+      //outline: none;
       tag.style.color = getUsernameColor(username);
 
       document.body.append(tag)
@@ -195,6 +198,7 @@ $(function() {
       
       // User is typing a message
       $("#" + tag.id).keyup(function() {
+        this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
         //if (tag.id != sentmsgs[sentmsgs.length-2])
         clearTimeout(stimeout);
         console.log("Pressing")
@@ -239,7 +243,7 @@ $(function() {
   // Callback function that removes element
   function removeElem(id) {
     if (recievedmsgs.includes(id)) {
-      console.log("Removed bc empty.");
+      //console.log("Removed bc empty.");
       document.getElementById(id).remove();
       recievedmsgs = recievedmsgs.filter(e => e !== id);
     } else {
@@ -297,6 +301,10 @@ $(function() {
     }
     //addParticipantsMessage(data);
   });
+
+  socket.on('remove elem', (data) => {
+    removeElem(data.idValue);
+  })
 
   socket.on('user left', (data) => {
     $("#" + data.username).remove()

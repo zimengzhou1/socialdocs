@@ -65,6 +65,11 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('new_position', {left : data.left, top : data.top, id : data.id})
     })
 
+    // removes elem globally when a user inputs more than 3 messages
+    socket.on('remove elem', (data) => {
+        socket.broadcast.emit('remove elem', {idValue: data.idValue})
+    })
+
     socket.on('disconnect', () => {
         if (addedUser) {
           --numUsers;
