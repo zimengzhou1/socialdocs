@@ -2,9 +2,10 @@ $(function() {
   const MAX_MESSAGES_SENT = 3;
   //total displayed messages
   const MAX_MESSAGES_RECV = 30;
-  const DISPLAY_TIME = 15000;
-  const MAX_CHARS = "40";
-  var FADE_TIME = 150;
+  //const DISPLAY_TIME = 15000;
+  const TYPING_TIMER_LENGTH = 5000;
+  //const MAX_CHARS = "40";
+  var FADE_TIME = 400;
   var COLORS = [
     '#e21400', '#91580f', '#f8a700', '#f78b00',
     '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
@@ -21,6 +22,7 @@ $(function() {
   var username;
   var usernames = [];
   var connected = false;
+  var typing = false;
   var $currentInput = $usernameInput.focus();
 
   // Make connection
@@ -80,7 +82,6 @@ $(function() {
 
   // Gets the color of a username through our hash function
   const getUsernameColor = (username) => {
-    // Compute hash code
     var hash = 7;
     for (var i = 0; i < username.length; i++) {
         hash = username.charCodeAt(i) + (hash << 5) - hash;
@@ -131,7 +132,8 @@ $(function() {
   function removeTag(id) {
     if (sentmsgs.includes(id)) {
       console.log("Removed bc empty.");
-      document.getElementById(id).remove();
+      //document.getElementById(id).remove();
+      $("#" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
       sentmsgs = sentmsgs.filter(e => e !== id);
     } else {
       return;
@@ -153,7 +155,8 @@ $(function() {
   function maxMessages(list, maxNum) {
     if (list.length > maxNum) {
       socket.emit('remove elem', {idValue : list[0]});
-      document.getElementById(list[0]).remove();
+      //document.getElementById(list[0]).remove();
+      $("#" + list[0]).fadeOut(FADE_TIME, function() { $(this).remove(); });
       list.shift();
     }
   }
@@ -200,13 +203,16 @@ $(function() {
       $("#" + tag.id).keyup(function() {
         this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
         //if (tag.id != sentmsgs[sentmsgs.length-2])
-        clearTimeout(stimeout);
+        //clearTimeout(stimeout);
         console.log("Pressing")
         var value = tag.value;
         var iden = tag.id;
+        /*
         var stimeout = setTimeout(() => {
           removeTag(tag.id);
         }, DISPLAY_TIME);
+        */
+        updateTyping(tag.id);
         socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
       })
     }
@@ -220,6 +226,27 @@ $(function() {
       console.log(clicked.value);
     })
     */
+
+    // Updates the typing event
+    const updateTyping = (id) => {
+      if (connected) {
+        console.log("this is called")
+        if (!typing) {
+          typing = true;
+          socket.emit('typing');
+        }
+        lastTypingTime = (new Date()).getTime();
+  
+        setTimeout(() => {
+          var typingTimer = (new Date()).getTime();
+          var timeDiff = typingTimer - lastTypingTime;
+          if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+            socket.emit('kill message', {id: id});
+            typing = false;
+          }
+        }, TYPING_TIMER_LENGTH);
+      }
+    }
 
    
 
@@ -244,7 +271,8 @@ $(function() {
   function removeElem(id) {
     if (recievedmsgs.includes(id)) {
       //console.log("Removed bc empty.");
-      document.getElementById(id).remove();
+      //document.getElementById(id).remove();
+      $("#" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
       recievedmsgs = recievedmsgs.filter(e => e !== id);
     } else {
       return;
@@ -284,11 +312,20 @@ $(function() {
    //Listening for new_message (typing)
    socket.on("new_message", (data) => {
     console.log(data.username);
-    clearTimeout(rtimeout);
+    //clearTimeout(rtimeout);
     $("#" + data.id).text(data.inputToAdd).css('color', getUsernameColor(data.username));
+    /*
     var rtimeout = setTimeout(() => {
       removeElem(data.id);
     }, DISPLAY_TIME);
+    */
+    updateTyping(data.id);
+   })
+
+   socket.on("kill message", (data) => {
+     console.log("GOT FUCKING HERE")
+     removeTag(data.id)
+     removeElem(data.id)
    })
 
   socket.on('user joined', (data) => {

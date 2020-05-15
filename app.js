@@ -70,6 +70,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('remove elem', {idValue: data.idValue})
     })
 
+    socket.on('kill message', (data) => {
+        socket.broadcast.emit('kill message', { id: data.id})
+    });
+
     socket.on('disconnect', () => {
         if (addedUser) {
           --numUsers;
