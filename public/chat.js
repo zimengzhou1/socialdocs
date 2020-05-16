@@ -192,6 +192,7 @@ $(function() {
         width: 80px;
         background: transparent;
         border: none;
+        outline: none;
         font-family: 'Noto Serif', serif;
       `
       //outline: none;
