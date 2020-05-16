@@ -27,13 +27,20 @@ iframe {
   display: block;
   margin: auto;
   width: 500px;
-  top: -250px;
+  top: -50px;
 }
 
 .usersOnline {
   display: inline-block;
-  width: 200px;
-  height: 400px;
+  width: 170px;
+  height: 200px;
+}
+
+/* Only for the "People Online" message. Make better imp. */
+.online {
+  list-style: none;
+  font-weight: bold;
+  color: gray;
 }
 
 /* Pages */
@@ -102,6 +109,8 @@ iframe {
 
 .messages {
   font-size: 150%;
+  overflow: auto;
+  max-height: 150px;
 }
 
 .inputMessage {

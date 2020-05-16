@@ -161,6 +161,9 @@ $(function() {
     }
   }
 
+  // Scrolling for people online
+  $(".messages").niceScroll({cursorcolor:"grey"});
+
     // ---------------------- EMITTED MESSAGES ---------------------------------------------
 
   document.body.addEventListener('click', event => {   
@@ -256,10 +259,11 @@ $(function() {
   socket.on('login', (data) => {
     connected = true;
     // Display the welcome message
+    /*
     var message = "People Online:";
     var $li = $('<li>').addClass('log').text(message).css('font-weight', 'bold');
     addMessageElement($li, {prepend: true});
-    /*
+    
     log(message, {
       prepend: true
     });
