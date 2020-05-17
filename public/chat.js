@@ -23,6 +23,8 @@ $(function() {
   var usernames = [];
   var connected = false;
   var typing = false;
+  // Time and ID of last key pressed for unique IDs
+  var typingTimes = [];
   var $currentInput = $usernameInput.focus();
 
   // Make connection
@@ -131,7 +133,7 @@ $(function() {
   // Callback function that removes element
   function removeTag(id) {
     if (sentmsgs.includes(id)) {
-      console.log("Removed bc empty.");
+      console.log("Remove function called.");
       //document.getElementById(id).remove();
       $("#" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
       sentmsgs = sentmsgs.filter(e => e !== id);
@@ -208,7 +210,6 @@ $(function() {
         this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
         //if (tag.id != sentmsgs[sentmsgs.length-2])
         //clearTimeout(stimeout);
-        console.log("Pressing")
         var value = tag.value;
         var iden = tag.id;
         /*
@@ -231,22 +232,29 @@ $(function() {
     })
     */
 
-    // Updates the typing event
+    // Sets callback for last time key pressed
     const updateTyping = (id) => {
       if (connected) {
-        console.log("this is called")
-        if (!typing) {
-          typing = true;
-          socket.emit('typing');
+        if (typingTimes.some(e => e.id === id)) {
+          const index = typingTimes.findIndex(e => e.id === id);
+          typingTimes[index] = {time: (new Date()).getTime(), id: id}
+        } else {
+          typingTimes.push({time: (new Date()).getTime(), id: id});
         }
-        lastTypingTime = (new Date()).getTime();
+        //lastTypingTime = (new Date()).getTime();
+        //console.log(typingTimes)
   
         setTimeout(() => {
           var typingTimer = (new Date()).getTime();
-          var timeDiff = typingTimer - lastTypingTime;
-          if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-            socket.emit('kill message', {id: id});
-            typing = false;
+          for (i=0; i < typingTimes.length; i++) {
+            if (sentmsgs.includes(typingTimes[i].id)) {
+              var timeDiff = typingTimer - typingTimes[i].time;
+              if (timeDiff >= TYPING_TIMER_LENGTH) {
+                console.log("Reached into timeout")
+                socket.emit('kill message', {id: typingTimes[i].id});
+                typingTimes = typingTimes.filter(e => e.id !== typingTimes[i].id);
+              }
+            }
           }
         }, TYPING_TIMER_LENGTH);
       }
@@ -324,7 +332,7 @@ $(function() {
       removeElem(data.id);
     }, DISPLAY_TIME);
     */
-    updateTyping(data.id);
+    //updateTyping(data.id);
    })
 
    socket.on("kill message", (data) => {

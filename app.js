@@ -71,7 +71,8 @@ io.on('connection', (socket) => {
     })
 
     socket.on('kill message', (data) => {
-        socket.broadcast.emit('kill message', { id: data.id})
+        console.log("server got kill")
+        io.sockets.emit('kill message', { id: data.id})
     });
 
     socket.on('disconnect', () => {
