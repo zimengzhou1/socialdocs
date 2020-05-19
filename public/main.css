@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css?family=Taviraj:300,400,700,300i,400i,700i");
+
+	html, body, h1 {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+	}
+
+	html {
+		font-size: 11pt;
+	}
+
+	body {
+		font-family: "Taviraj", serif;
+		font-weight: 300;
+		font-size: 1rem;
+		line-height: 1.65;
+	}
+
+	a {
+		color: #5AA6ED;
+	}
+
+	header {
+		background: rgba(0, 0, 0, 0.75);
+		color: #a6a6a6;
+		cursor: default;
+		height: 3.25em;
+		left: 0;
+		line-height: 3.25em;
+		position: fixed;
+		text-align: right;
+		top: 0;
+		width: 100%;
+		z-index: 10001;
+	}
+
+	header .feedb span {
+		display: inline-block;
+		height: inherit;
+		right: 1.25rem;
+		line-height: inherit;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+		top: 0;
+		font-size: 1.25rem;
+		color: #FFF;
+		text-decoration: none;
+	}
+
+	header .name {
+		display: inline-block;
+		height: inherit;
+		left: 1.25rem;
+		line-height: inherit;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+		top: 0;
+	}
+
+	header > .name a {
+		font-size: 1.25rem;
+		color: #FFF;
+		text-decoration: none;
+	}
+
+
+	/* intro */
+
+	#intro {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		background-color: #f2f2f2;
+		height: 100vh;
+		width: 100%;
+		position: relative;
+		text-align: center;
+		overflow: hidden;
+	}
+
+	#intro .inner {
+		opacity: 1;
+		position: relative;
+		z-index: 2;
+	}
+
+	#intro h1 {
+		font-size: 4rem;
+		margin-bottom: 1rem;
+		color: rgb(0, 0, 0);
+	}
+
+	#intro p {
+		color: rgba(0, 0, 0, 0.877);
+		font-size: 1.5rem;
+		margin-bottom: 3rem;
+	}
+
+	.line-1{
+		position: relative;
+		top: 50%;  
+		width: 22em;
+		margin: 0 auto;
+		border-right: 2px solid rgb(0, 0, 0);
+		font-size: 180%;
+		white-space: nowrap;
+		overflow: hidden; 
+	}
+	
+	/* Animation */
+	.anim-typewriter{
+	  animation: typewriter 4s steps(45) 1s 1 normal both,
+	  blinkTextCursor 500ms steps(44) infinite normal;
+	}
+
+	@keyframes typewriter{
+	  from{width: 0;}
+	  to{width: 19.8em;}	  
+	}
+	
+	@keyframes blinkTextCursor{
+	  from{border-right-color: rgb(0, 0, 0);}
+	  to{border-right-color: transparent;}
+	}

@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
     res.render('index')
 });
 
+app.get('/main', (req, res) => {
+    res.render('main')
+});
+
 //Listen on port 3000 or whatever the hell heroku does
 server.listen(PORT);
 
