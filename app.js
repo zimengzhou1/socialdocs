@@ -13,11 +13,11 @@ app.use(express.static('public'));
 
 //routes
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('main')
 });
 
-app.get('/main', (req, res) => {
-    res.render('main')
+app.get('/chat', (req, res) => {
+    res.render('chat')
 });
 
 //Listen on port 3000 or whatever the hell heroku does
