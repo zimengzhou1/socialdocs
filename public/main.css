@@ -21,7 +21,7 @@
 	}
 
 	a {
-		color: #5AA6ED;
+        color: #5AA6ED;
 	}
 
 	header {
@@ -116,7 +116,7 @@
 	/* Animation */
 	.anim-typewriter{
 	  animation: typewriter 4s steps(45) 1s 1 normal both,
-	  blinkTextCursor 500ms steps(44) infinite normal;
+	  blinkTextCursor 500ms steps(40) infinite normal;
 	}
 
 	@keyframes typewriter{
