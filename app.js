@@ -1,105 +1,37 @@
-var PORT = process.env.PORT || 3000;
+var createError = require('http-errors');
 const express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+
+var mainRouter = require('./routes/main');
+var chatRouter = require('./routes/chat');
+
 const app = express();
 
-var http = require('http');
-var server = http.Server(app);
 
 //set template engine ejs
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 //middlewares
 app.use(express.static('public'));
+app.use('/', mainRouter);
+app.use('/chat', chatRouter);
 
-//routes
-app.get('/', (req, res) => {
-    res.render('main')
-});
-
-app.get('/chat', (req, res) => {
-    res.render('chat')
-});
-
-//Listen on port 3000 or whatever the hell heroku does
-server.listen(PORT);
-
-//socket.io instantiation
-const io = require("socket.io")(server)
-
-var numUsers = 0;
-var usernames = [];
-
-//listen on every connection
-io.on('connection', (socket) => {
-    console.log('New user connected')
-
-    var addedUser = false;
-    socket.on('add user', (username) => {
-        if (addedUser) return;
-
-        // we store the username in the socket session for this client
-        socket.username = username;
-        ++numUsers;
-        usernames.push(username);
-        addedUser = true;
-        
-        // Client will send the "people online" message (quite redundant) and verify connected status
-        socket.emit('login', {
-        numUsers: numUsers
-        });
-        console.log("reached here")
-        // echo globally that a person has connected
-        io.sockets.emit('user joined', {
-        username: socket.username,
-        numUsers: numUsers,
-        usernames: usernames
-        });
-    });
-
-    //listen on new_message (typing)
-    socket.on('new_message', (data) => {
-        //broadcast the new message
-        console.log(data);
-        socket.broadcast.emit('new_message', {inputToAdd : data.inputToAdd, id: data.id, username: data.username});
-    })
-
-    socket.on('new_position', (data) => {
-        //broadcast new position
-        console.log(data);
-        socket.broadcast.emit('new_position', {left : data.left, top : data.top, id : data.id})
-    })
-
-    // removes elem globally when a user inputs more than 3 messages
-    socket.on('remove elem', (data) => {
-        socket.broadcast.emit('remove elem', {idValue: data.idValue})
-    })
-
-    socket.on('kill message', (data) => {
-        console.log("server got kill")
-        io.sockets.emit('kill message', { id: data.id})
-    });
-
-    socket.on('disconnect', () => {
-        if (addedUser) {
-          --numUsers;
-          usernames = usernames.filter(e => e !== socket.username);
-    
-          socket.broadcast.emit('user left', {
-            username: socket.username,
-            numUsers: numUsers
-          });
-        }
-      });
-    /*
-    //listen on typing
-    socket.on('typing', (data) => {
-        console.log(data);
-    	socket.emit('typing', {message : data.message})
-    })
-
-    //listen on not typing
-    socket.on('nottyping', () => {
-    	socket.broadcast.emit('nottyping')
-    })
-    */
-})
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    next(createError(404));
+  });
+  
+  // error handler
+  app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
+  
+module.exports = app;
