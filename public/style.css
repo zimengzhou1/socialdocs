@@ -5,6 +5,12 @@ html {
 body {
     margin: 0px;
     height: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 header {
@@ -30,7 +36,16 @@ iframe {
   top: -50px;
 }
 
+#intromsg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
+}
+
 .usersOnline {
+  position:fixed;
   display: inline-block;
   width: 170px;
   height: 200px;
@@ -103,6 +118,8 @@ iframe {
 .chat.page {
   display: none;
   background-color: #f2f2f2;
+  height:5000px;
+  width:5000px;
 }
 
 /* Font */

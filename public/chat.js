@@ -34,6 +34,7 @@ $(function() {
   //var stimeout;
   //var rtimeout;
 
+  $("body").niceScroll({cursorcolor:"grey"});
 
 
   // ------------------------ SETUP FROM USERNAME PAGE ------------------------------------
@@ -47,6 +48,7 @@ $(function() {
       $chatPage.show();
       $loginPage.off('click');
 
+      document.getElementById('intromsg').scrollIntoView({ inline: 'center', block: 'center' });
       // Tell the server your username
       socket.emit('add user', username);
     }
@@ -168,62 +170,53 @@ $(function() {
 
     // ---------------------- EMITTED MESSAGES ---------------------------------------------
 
-  document.body.addEventListener('click', event => {   
-    const clicked = document.elementFromPoint(event.clientX, event.clientY)
-    console.log(username + " created a new input.")
-    
-    if (clicked.matches('input')) {
-      clicked.focus
-    } else {
-      const tag = document.createElement('input');
-      tag.id = uniqId();
-      //tag.onkeypress = this.style.width = ((this.value.length + 1) * 8) + 'px';
-      //tag.setAttribute("maxlength", MAX_CHARS)
-      /*
-      setTimeout(() => {
-        removeTag(tag.id);
-      }, DISPLAY_TIME);
-      */
-      sentmsgs.push(tag.id);
-      console.log(sentmsgs);
-
-      tag.style.cssText = `
-        position: absolute;
-        top: ${event.clientY}px;
-        left: ${event.clientX}px;
-        width: 80px;
-        background: transparent;
-        border: none;
-        outline: none;
-        font-family: 'Noto Serif', serif;
-      `
-      //outline: none;
-      tag.style.color = getUsernameColor(username);
-
-      document.body.append(tag)
-      tag.focus()
-      socket.emit('new_position', {left : event.clientX, top : event.clientY, id : tag.id});
+  document.body.addEventListener('click', event => {
+    if (distance == 0) {
+      const clicked = document.elementFromPoint(event.clientX, event.clientY)
+      console.log(username + " created a new input.")
       
-      
-      // User is typing a message
-      $("#" + tag.id).keyup(function() {
-        this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
-        //if (tag.id != sentmsgs[sentmsgs.length-2])
-        //clearTimeout(stimeout);
-        var value = tag.value;
-        var iden = tag.id;
-        /*
-        var stimeout = setTimeout(() => {
-          removeTag(tag.id);
-        }, DISPLAY_TIME);
-        */
-        updateTyping(tag.id);
-        socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
-      })
-    }
+      if (clicked.matches('input')) {
+        clicked.focus
+      } else {
+        const tag = document.createElement('input');
+        tag.id = uniqId();
+        //tag.setAttribute("maxlength", MAX_CHARS)
 
-    isPreviousEmpty(sentmsgs);
-    maxMessages(sentmsgs, MAX_MESSAGES_SENT);   
+        sentmsgs.push(tag.id);
+        console.log(sentmsgs);
+
+        tag.style.cssText = `
+          position: absolute;
+          top: ${event.pageY}px;
+          left: ${event.pageX}px;
+          width: 80px;
+          background: transparent;
+          border: none;
+          outline: none;
+          font-family: 'Noto Serif', serif;
+        `
+        //outline: none;
+        tag.style.color = getUsernameColor(username);
+
+        document.body.append(tag)
+        tag.focus()
+        socket.emit('new_position', {left : event.clientX, top : event.clientY, id : tag.id});
+        
+        
+        // User is typing a message
+        $("#" + tag.id).keyup(function() {
+          this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
+          var value = tag.value;
+          var iden = tag.id;
+
+          updateTyping(tag.id);
+          socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
+        })
+      }
+
+      isPreviousEmpty(sentmsgs);
+      maxMessages(sentmsgs, MAX_MESSAGES_SENT);  
+    }   
   })
 
     /*
@@ -363,5 +356,31 @@ $(function() {
     //addParticipantsMessage(data);
     //removeChatTyping(data);
   });
+
+  var clicked = false;
+  var yPos, xPos;
+  var distance;
+
+  $(document).on ({ 
+    'mousemove': function(e) {
+          clicked && updateScrollPos(e);
+      },
+      'mousedown': function(e) {
+          distance = 0;  
+          clicked = true;  
+          yPos = e.pageY;  
+          xPos = e.pageX;
+      },
+      'mouseup': function() {
+          clicked = false;
+          $('html').css('cursor', 'auto');
+      }
+  })
+  
+  function updateScrollPos (e) {
+    distance = Math.abs((yPos - e.pageY)) + Math.abs((xPos - e.pageX))
+    $(window).scrollTop($(window).scrollTop() + (yPos - e.pageY));
+    $(window).scrollLeft($(window).scrollLeft() + (xPos - e.pageX));
+  }
    
 });
