@@ -35,6 +35,8 @@ $(function() {
   //var rtimeout;
 
   $("body").niceScroll({cursorcolor:"grey"});
+  // Scrolling for people online
+  $(".messages").niceScroll({cursorcolor:"grey"});
 
 
   // ------------------------ SETUP FROM USERNAME PAGE ------------------------------------
@@ -46,7 +48,7 @@ $(function() {
     if (username) {
       $loginPage.fadeOut();
       $chatPage.show();
-      $loginPage.off('click');
+      $loginPage.off();
 
       document.getElementById('intromsg').scrollIntoView({ inline: 'center', block: 'center' });
       // Tell the server your username
@@ -67,9 +69,7 @@ $(function() {
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
       if (username) {
-        sendMessage();
-        socket.emit('stop typing');
-        typing = false;
+        return;
       } else {
         setUsername();
       }
@@ -165,65 +165,59 @@ $(function() {
     }
   }
 
-  // Scrolling for people online
-  $(".messages").niceScroll({cursorcolor:"grey"});
 
     // ---------------------- EMITTED MESSAGES ---------------------------------------------
 
   document.body.addEventListener('click', event => {
-    if (distance == 0) {
-      const clicked = document.elementFromPoint(event.clientX, event.clientY)
-      console.log(username + " created a new input.")
-      
-      if (clicked.matches('input')) {
-        clicked.focus
-      } else {
-        const tag = document.createElement('input');
-        tag.id = uniqId();
-        //tag.setAttribute("maxlength", MAX_CHARS)
-
-        sentmsgs.push(tag.id);
-        console.log(sentmsgs);
-
-        tag.style.cssText = `
-          position: absolute;
-          top: ${event.pageY}px;
-          left: ${event.pageX}px;
-          width: 80px;
-          background: transparent;
-          border: none;
-          outline: none;
-          font-family: 'Noto Serif', serif;
-        `
-        //outline: none;
-        tag.style.color = getUsernameColor(username);
-
-        document.body.append(tag)
-        tag.focus()
-        socket.emit('new_position', {left : event.clientX, top : event.clientY, id : tag.id});
+    if (connected) {
+      if (distance == 0) {
+        //const clicked = document.elementFromPoint(event.pageX, event.pageY)
+        console.log(username + " created a new input.")
         
-        
-        // User is typing a message
-        $("#" + tag.id).keyup(function() {
-          this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
-          var value = tag.value;
-          var iden = tag.id;
-
-          updateTyping(tag.id);
-          socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
-        })
+        if (false) {//clicked.matches('input')
+          clicked.focus
+        } else {
+          const tag = document.createElement('input');
+          tag.id = uniqId();
+          //tag.setAttribute("maxlength", MAX_CHARS)
+  
+          sentmsgs.push(tag.id);
+          console.log(sentmsgs);
+  
+          tag.style.cssText = `
+            position: absolute;
+            top: ${event.pageY}px;
+            left: ${event.pageX}px;
+            width: 80px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Noto Serif', serif;
+          `
+  
+          tag.style.color = getUsernameColor(username);
+  
+          document.body.append(tag)
+          tag.focus()
+          socket.emit('new_position', {left : event.pageX, top : event.pageY, id : tag.id});
+          
+          
+          // User is typing a message
+          $("#" + tag.id).keyup(function() {
+            this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
+            var value = tag.value;
+            var iden = tag.id;
+  
+            updateTyping(tag.id);
+            socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
+          })
+        }
+  
+        isPreviousEmpty(sentmsgs);
+        maxMessages(sentmsgs, MAX_MESSAGES_SENT);  
       }
-
-      isPreviousEmpty(sentmsgs);
-      maxMessages(sentmsgs, MAX_MESSAGES_SENT);  
     }   
   })
-
-    /*
-    document.body.addEventListener('keyup', () => {
-      console.log(clicked.value);
-    })
-    */
 
     // Sets callback for last time key pressed
     const updateTyping = (id) => {
@@ -288,7 +282,7 @@ $(function() {
    //Listening for new_position
    socket.on("new_position", (data) => {
      recievedmsgs.push(data.id);
-      var display = $("<p>|</p>").attr("id", data.id)
+      var display = $("<p>|</p>").attr('id', data.id)
       console.log('Current ID is: ' + display.attr('id'));
       console.log(recievedmsgs);
       
@@ -298,11 +292,6 @@ $(function() {
             left: data.left,
             top: data.top
          }))
-    /*
-    setTimeout(() => {
-      removeElem(data.id);
-    }, DISPLAY_TIME);
-    */
 
     // If previous element is empty, remove it
     if (recievedmsgs.length > 1) {
@@ -329,7 +318,7 @@ $(function() {
    })
 
    socket.on("kill message", (data) => {
-     console.log("GOT FUCKING HERE")
+     console.log("Message got removed.")
      removeTag(data.id)
      removeElem(data.id)
    })
@@ -357,6 +346,7 @@ $(function() {
     //removeChatTyping(data);
   });
 
+  //Dragging the page
   var clicked = false;
   var yPos, xPos;
   var distance;

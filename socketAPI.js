@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('kill message', (data) => {
-        console.log("server got kill")
+        console.log("Server emitted kill message response")
         io.sockets.emit('kill message', { id: data.id})
     });
 
