@@ -134,11 +134,11 @@ $(function() {
 
   // Callback function that removes element
   function removeTag(id) {
-    if (sentmsgs.includes(id)) {
+    if (sentmsgs.filter(message => message.ID === id)) {
       console.log("Remove function called.");
       //document.getElementById(id).remove();
       $("#" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
-      sentmsgs = sentmsgs.filter(e => e !== id);
+      sentmsgs = sentmsgs.filter(e => e.ID !== id);
     } else {
       return;
     }
@@ -147,10 +147,10 @@ $(function() {
   // If previous element is empty, remove it
   function isPreviousEmpty(list) {
     if (list.length > 1) {
-      var value = document.getElementById(list[list.length - 2]).value;
+      var value = document.getElementById(list[list.length - 2]['ID']).value;
       if (value === "") {
         console.log("Element is empty")
-        removeTag(list[list.length - 2]);
+        removeTag(list[list.length - 2]['ID']);
       }
     }
   }
@@ -158,9 +158,9 @@ $(function() {
   // Maintains maximum number of messages shown per user
   function maxMessages(list, maxNum) {
     if (list.length > maxNum) {
-      socket.emit('remove elem', {idValue : list[0]});
+      socket.emit('remove elem', {idValue : list[0]['ID']});
       //document.getElementById(list[0]).remove();
-      $("#" + list[0]).fadeOut(FADE_TIME, function() { $(this).remove(); });
+      $("#" + list[0]['ID']).fadeOut(FADE_TIME, function() { $(this).remove(); });
       list.shift();
     }
   }
@@ -232,7 +232,7 @@ $(function() {
         top: (intercept.y ),
         height: '10px',
         width: '10px',
-        'background-color': 'rgb(0,0,0)',
+        'background-color': getUsernameColor(username),
         'border-radius': '50%',
         'display': 'inline-block'
       }));  
@@ -258,7 +258,7 @@ $(function() {
           tag.id = uniqId();
           //tag.setAttribute("maxlength", MAX_CHARS)
   
-          sentmsgs.push(tag.id);
+          sentmsgs.push({ID: tag.id, username: username});
           console.log(sentmsgs);
   
           tag.style.cssText = `
@@ -276,7 +276,7 @@ $(function() {
   
           document.body.append(tag)
           tag.focus()
-          socket.emit('new_position', {left : event.pageX, top : event.pageY, id : tag.id});
+          socket.emit('new_position', {left : event.pageX, top : event.pageY, id : tag.id, username: username});
           
           
           // User is typing a message
@@ -311,7 +311,7 @@ $(function() {
         setTimeout(() => {
           var typingTimer = (new Date()).getTime();
           for (i=0; i < typingTimes.length; i++) {
-            if (sentmsgs.includes(typingTimes[i].id)) {
+            if (sentmsgs.filter(message => message.ID === typingTimes[i].id)) {
               var timeDiff = typingTimer - typingTimes[i].time;
               if (timeDiff >= TYPING_TIMER_LENGTH) {
                 console.log("Reached into timeout")
@@ -346,12 +346,12 @@ $(function() {
 
   // Callback function that removes element
   function removeElem(id) {
-    if (recievedmsgs.includes(id)) {
+    if (recievedmsgs.filter(message => message.ID === id)) {
       //console.log("Removed bc empty.");
       //document.getElementById(id).remove();
       $("#" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
       $("#circle" + id).fadeOut(FADE_TIME, function() { $(this).remove(); });
-      recievedmsgs = recievedmsgs.filter(e => e !== id);
+      recievedmsgs = recievedmsgs.filter(e => e.ID !== id);
     } else {
       return;
     }
@@ -359,7 +359,7 @@ $(function() {
 
    //Listening for new_position
    socket.on("new_position", (data) => {
-     recievedmsgs.push(data.id);
+     recievedmsgs.push({ID: data.id, username: data.username});
       var display = $("<p>|</p>").attr('id', data.id)
       console.log('Current ID is: ' + display.attr('id'));
       console.log(recievedmsgs);
@@ -373,9 +373,9 @@ $(function() {
 
     // If previous element is empty, remove it
     if (recievedmsgs.length > 1) {
-      var value = document.getElementById(recievedmsgs[recievedmsgs.length - 2]).textContent;
+      var value = document.getElementById(recievedmsgs[recievedmsgs.length - 2]['ID']).textContent;
       if (value === "|") {
-        removeElem(recievedmsgs[recievedmsgs.length - 2]);
+        removeElem(recievedmsgs[recievedmsgs.length - 2]['ID']);
       }
     }
 
@@ -388,7 +388,7 @@ $(function() {
     //clearTimeout(rtimeout);
     $("#" + data.id).text(data.inputToAdd).css('color', getUsernameColor(data.username));
     
-    drawCircle($("#" + data.id), data.id);
+    drawCircle($("#" + data.id), data.id, data.username);
     /*
     var rtimeout = setTimeout(() => {
       removeElem(data.id);
@@ -435,7 +435,7 @@ $(function() {
     'mousemove': function(e) {
           clicked && updateScrollPos(e);
           for (i=0; i < recievedmsgs.length; i++) {
-            drawCircle($("#" + recievedmsgs[i]), recievedmsgs[i])
+            drawCircle($("#" + recievedmsgs[i]['ID']), recievedmsgs[i]['ID'], recievedmsgs[i]['username'])
           }
       },
       'mousedown': function(e) {
