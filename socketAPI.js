@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
     socket.on('new_position', (data) => {
         //broadcast new position
         console.log(data);
-        socket.broadcast.emit('new_position', {left : data.left, top : data.top, id : data.id})
+        socket.broadcast.emit('new_position', {left : data.left, top : data.top, id : data.id, username: data.username})
     })
 
     // removes elem globally when a user inputs more than 3 messages
