@@ -114,6 +114,11 @@ iframe {
   font-weight: 100;
 }
 
+#usernameTaken {
+  color: red;
+  visibility: hidden;
+}
+
 /* Chat page */
 
 .chat.page {

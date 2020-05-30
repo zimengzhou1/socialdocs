@@ -34,6 +34,10 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('get usernames', () => {
+        io.sockets.emit('user joined', {usernames: usernames});
+    })
+
     //listen on new_message (typing)
     socket.on('new_message', (data) => {
         //broadcast the new message

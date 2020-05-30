@@ -7,9 +7,9 @@ $(function() {
   //const MAX_CHARS = "40";
   var FADE_TIME = 400;
   var COLORS = [
-    '#e21400', '#91580f', '#f8a700', '#f78b00',
-    '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
-    '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
+    '#00008B', '#006400', '#8B0000', '#000000',
+    '#8B008B', '#2F4F4F', '#B22222', '#228B22',
+    '#FF4500', '#2E8B57', '#4B0082', '#FFD700'
   ];
 
   var $window = $(window);
@@ -41,8 +41,15 @@ $(function() {
 
   // ------------------------ SETUP FROM USERNAME PAGE ------------------------------------
 
+  socket.emit('get usernames');
   const setUsername = () => {
-    username = cleanInput($usernameInput.val().trim());
+    var usernameTemp = cleanInput($usernameInput.val().trim());
+    if (usernames.includes(usernameTemp)) {
+      document.getElementById("usernameTaken").style.visibility = "visible";
+      return;
+    }else {
+      username = usernameTemp;
+    }
 
     // If the username is valid, string is true?!
     if (username) {
@@ -405,7 +412,7 @@ $(function() {
 
   socket.on('user joined', (data) => {
     for (i = 0; i < data.usernames.length; i++) {
-      if (!(usernames.indexOf(data.usernames[i]) >= 0)) {
+      if (!(usernames.includes(data.usernames[i]))) {
         usernames.push(data.usernames[i]);
         log(data.usernames[i]);
       }
@@ -420,6 +427,12 @@ $(function() {
 
   socket.on('user left', (data) => {
     $("#" + data.username).remove()
+    const lastmsgs = recievedmsgs.filter(msg => msg['username'] === data.username)
+    lastmsgs.map((msg)=>{
+      setTimeout(() =>{
+        removeElem(msg['ID']) ,
+        2000});
+    })
     usernames = usernames.filter(e => e !== data.username);
     //log(data.username + ' left');
     //addParticipantsMessage(data);
