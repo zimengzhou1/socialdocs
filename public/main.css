@@ -21,52 +21,31 @@
 	}
 
 	a {
-        color: #5AA6ED;
+		text-decoration: none;
+		color: black;
 	}
 
-	header {
-		background: rgba(0, 0, 0, 0.75);
-		color: #a6a6a6;
-		cursor: default;
-		height: 3.25em;
-		left: 0;
-		line-height: 3.25em;
+	.name {
+		font-size: 1.25rem;
+		color: rgb(255, 20, 20);
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	/* The sidebar menu */
+	.nav-bar {
+		width: 130px;
 		position: fixed;
-		text-align: right;
-		top: 0;
-		width: 100%;
-		z-index: 10001;
+		z-index: 1;
+		top: 0px;
+		left: 10px;
+		background: rgba(255, 255, 255, 0);
+		overflow-x: hidden;
+		padding: 15px 15px;
 	}
 
-	header .feedb span {
-		display: inline-block;
-		height: inherit;
-		right: 1.25rem;
-		line-height: inherit;
-		margin: 0;
-		padding: 0;
-		position: absolute;
-		top: 0;
-		font-size: 1.25rem;
-		color: #FFF;
-		text-decoration: none;
-	}
-
-	header .name {
-		display: inline-block;
-		height: inherit;
-		left: 1.25rem;
-		line-height: inherit;
-		margin: 0;
-		padding: 0;
-		position: absolute;
-		top: 0;
-	}
-
-	header > .name a {
-		font-size: 1.25rem;
-		color: #FFF;
-		text-decoration: none;
+	.nav-bar a:hover {
+		font-weight: 500;
 	}
 
 
@@ -91,23 +70,31 @@
 	}
 
 	#intro h1 {
-		font-size: 4rem;
+		font-size: 2.5rem;
 		margin-bottom: 1rem;
 		color: rgb(0, 0, 0);
 	}
 
 	#intro p {
 		color: rgba(0, 0, 0, 0.877);
-		font-size: 1.5rem;
-		margin-bottom: 3rem;
+		font-size: 1rem;
+		margin-bottom: 5rem;
 	}
+
+	#intro a {
+		color: rgb(38, 167, 76);
+	}
+
+	#intro a:hover {
+		font-weight: 500;
+	  }
 
 	.line-1{
 		position: relative;
 		top: 50%;  
 		width: 22em;
 		margin: 0 auto;
-		border-right: 2px solid rgb(0, 0, 0);
+		border-right: 1.8px solid rgb(0, 0, 0);
 		font-size: 180%;
 		white-space: nowrap;
 		overflow: hidden; 

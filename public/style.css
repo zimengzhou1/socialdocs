@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css?family=Taviraj:300,400,700,300i,400i,700i");
 html {
     height: 100%;
 }
@@ -24,6 +25,11 @@ p {
   white-space: nowrap;
 }
 
+a {
+  text-decoration: none;
+  color: black;
+}
+
 ul {
   list-style: none;
   word-wrap: break-word;
@@ -37,6 +43,33 @@ iframe {
   top: -50px;
 }
 
+/* The sidebar menu */
+.nav-bar {
+  font-family: "Taviraj", serif;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.65;
+  width: 130px;
+  position: fixed;
+  z-index: 1;
+  top: 0px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0);
+  overflow-x: hidden;
+  padding: 15px 15px;
+}
+
+.name {
+  font-size: 1.25rem;
+  color: rgb(255, 20, 20);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-bar a:hover {
+  font-weight: 500;
+}
+
 #intromsg {
   position: absolute;
   top: 50%;
@@ -46,6 +79,8 @@ iframe {
 }
 
 .usersOnline {
+  top: 20px;
+  right: 1.25rem;
   position:fixed;
   display: inline-block;
   width: 170px;
@@ -116,7 +151,12 @@ iframe {
 
 #usernameTaken {
   color: red;
-  visibility: hidden;
+  display: none;
+}
+
+#noSpace {
+  color: red;
+  display: none;
 }
 
 /* Chat page */

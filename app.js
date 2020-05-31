@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 
 var mainRouter = require('./routes/main');
 var chatRouter = require('./routes/chat');
+var aboutRouter = require('./routes/about');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use('/', mainRouter);
 app.use('/chat', chatRouter);
+app.use('/about', aboutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

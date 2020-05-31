@@ -45,8 +45,10 @@ $(function() {
   const setUsername = () => {
     var usernameTemp = cleanInput($usernameInput.val().trim());
     if (usernames.includes(usernameTemp)) {
-      document.getElementById("usernameTaken").style.visibility = "visible";
+      document.getElementById("usernameTaken").style.display = "block";
       return;
+    }else if (/\s/.test(usernameTemp)) {
+      document.getElementById("noSpace").style.display = "block";
     }else {
       username = usernameTemp;
     }
@@ -78,6 +80,8 @@ $(function() {
       if (username) {
         return;
       } else {
+        document.getElementById("usernameTaken").style.display = "none";
+        document.getElementById("noSpace").style.display = "none";
         setUsername();
       }
     }
@@ -276,7 +280,7 @@ $(function() {
             background: transparent;
             border: none;
             outline: none;
-            font-family: 'Noto Serif', serif;
+            font-family: 'Nunito', sans-serif;
           `
   
           tag.style.color = getUsernameColor(username);
