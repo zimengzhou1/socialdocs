@@ -49,6 +49,45 @@
 	}
 
 
+	#about {
+		background-color: #f2f2f2;
+		height: 100vh;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.aboutText {
+		margin-top: 30vh;
+		margin-left: 25vw;
+		margin-right: 25vw;
+		margin-bottom: 5vh;
+		text-align: center;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.aboutText h1 {
+		font-size: 2rem;
+		margin-bottom: 2rem;
+		color: rgb(0, 0, 0);
+		border-bottom: 1px solid #CCCCCC;
+	}
+
+	.aboutText p {
+		text-align: left;
+	}
+
+	.contacts {
+		text-align: center;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contacts a {
+		color: rgb(38, 167, 76);
+	}
+
+
 	/* intro */
 
 	#intro {

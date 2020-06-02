@@ -1,10 +1,10 @@
 $(function() {
   const MAX_MESSAGES_SENT = 3;
   //total displayed messages
-  const MAX_MESSAGES_RECV = 30;
+  const MAX_MESSAGES_RECV = 60;
   //const DISPLAY_TIME = 15000;
   const TYPING_TIMER_LENGTH = 5000;
-  //const MAX_CHARS = "40";
+  const MAX_CHARS = "60";
   var FADE_TIME = 400;
   var COLORS = [
     '#00008B', '#006400', '#8B0000', '#000000',
@@ -267,7 +267,7 @@ $(function() {
         } else {
           const tag = document.createElement('input');
           tag.id = uniqId();
-          //tag.setAttribute("maxlength", MAX_CHARS)
+          tag.setAttribute("maxlength", MAX_CHARS)
   
           sentmsgs.push({ID: tag.id, username: username});
           console.log(sentmsgs);
