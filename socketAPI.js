@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
         socket.username = username;
         ++numUsers;
         usernames.push(username);
+        console.log(usernames);
         addedUser = true;
         
         // Client will send the "people online" message (quite redundant) and verify connected status
@@ -56,10 +57,12 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('remove elem', {idValue: data.idValue})
     })
 
+    /*
     socket.on('kill message', (data) => {
         console.log("Server emitted kill message response")
         io.sockets.emit('kill message', { id: data.id})
     });
+    */
 
     socket.on('disconnect', () => {
         if (addedUser) {

@@ -24,7 +24,8 @@ $(function() {
   var connected = false;
   var typing = false;
   // Time and ID of last key pressed for unique IDs
-  var typingTimes = [];
+  var stypingTimes = [];
+  var rtypingTimes = [];
   var $currentInput = $usernameInput.focus();
 
   // Make connection
@@ -296,7 +297,7 @@ $(function() {
             var value = tag.value;
             var iden = tag.id;
   
-            updateTyping(tag.id);
+            supdateTyping(tag.id);
             socket.emit('new_message', {inputToAdd : value, id: iden, username: username})
           })
         }
@@ -308,26 +309,54 @@ $(function() {
   })
 
     // Sets callback for last time key pressed
-    const updateTyping = (id) => {
+    const supdateTyping = (id) => {
       if (connected) {
-        if (typingTimes.some(e => e.id === id)) {
-          const index = typingTimes.findIndex(e => e.id === id);
-          typingTimes[index] = {time: (new Date()).getTime(), id: id}
+        if (stypingTimes.some(e => e.id === id)) {
+          const index = stypingTimes.findIndex(e => e.id === id);
+          stypingTimes[index] = {time: (new Date()).getTime(), id: id}
         } else {
-          typingTimes.push({time: (new Date()).getTime(), id: id});
+          stypingTimes.push({time: (new Date()).getTime(), id: id});
+        }
+  
+        setTimeout(() => {
+          var typingTimer = (new Date()).getTime();
+          for (i=0; i < stypingTimes.length; i++) {
+            if (sentmsgs.filter(message => message.ID === stypingTimes[i].id)) {
+              var timeDiff = typingTimer - stypingTimes[i].time;
+              if (timeDiff >= TYPING_TIMER_LENGTH) {
+                console.log("Reached into timeout")
+                //socket.emit('kill message', {id: typingTimes[i].id});
+                removeElem(stypingTimes[i].id);
+                stypingTimes = stypingTimes.filter(e => e.id !== stypingTimes[i].id);
+              }
+            }
+          }
+        }, TYPING_TIMER_LENGTH);
+      }
+    }
+
+    // Refactor later - change global variable through parameter
+    const rupdateTyping = (id) => {
+      if (connected) {
+        if (rtypingTimes.some(e => e.id === id)) {
+          const index = rtypingTimes.findIndex(e => e.id === id);
+          rtypingTimes[index] = {time: (new Date()).getTime(), id: id}
+        } else {
+          rtypingTimes.push({time: (new Date()).getTime(), id: id});
         }
         //lastTypingTime = (new Date()).getTime();
         //console.log(typingTimes)
   
         setTimeout(() => {
           var typingTimer = (new Date()).getTime();
-          for (i=0; i < typingTimes.length; i++) {
-            if (sentmsgs.filter(message => message.ID === typingTimes[i].id)) {
-              var timeDiff = typingTimer - typingTimes[i].time;
+          for (i=0; i < rtypingTimes.length; i++) {
+            if (sentmsgs.filter(message => message.ID === rtypingTimes[i].id)) {
+              var timeDiff = typingTimer - rtypingTimes[i].time;
               if (timeDiff >= TYPING_TIMER_LENGTH) {
                 console.log("Reached into timeout")
-                socket.emit('kill message', {id: typingTimes[i].id});
-                typingTimes = typingTimes.filter(e => e.id !== typingTimes[i].id);
+                //socket.emit('kill message', {id: typingTimes[i].id});
+                removeTag(rtypingTimes[i].id);
+                rtypingTimes = rtypingTimes.filter(e => e.id !== rtypingTimes[i].id);
               }
             }
           }
@@ -398,7 +427,7 @@ $(function() {
     console.log(data.username);
     //clearTimeout(rtimeout);
     $("#" + data.id).text(data.inputToAdd).css('color', getUsernameColor(data.username));
-    
+    rupdateTyping(data.id);
     drawCircle($("#" + data.id), data.id, data.username);
     /*
     var rtimeout = setTimeout(() => {
@@ -408,11 +437,13 @@ $(function() {
     //updateTyping(data.id);
    })
 
+   /*
    socket.on("kill message", (data) => {
      console.log("Message got removed.")
      removeTag(data.id)
      removeElem(data.id)
    })
+   */
 
   socket.on('user joined', (data) => {
     for (i = 0; i < data.usernames.length; i++) {
@@ -431,12 +462,14 @@ $(function() {
 
   socket.on('user left', (data) => {
     $("#" + data.username).remove()
+    /*
     const lastmsgs = recievedmsgs.filter(msg => msg['username'] === data.username)
     lastmsgs.map((msg)=>{
       setTimeout(() =>{
         removeElem(msg['ID']) ,
         2000});
     })
+    */
     usernames = usernames.filter(e => e !== data.username);
     //log(data.username + ' left');
     //addParticipantsMessage(data);
