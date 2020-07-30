@@ -109,7 +109,9 @@ $(function() {
 
   // Log a message
   const log = (message, options) => {
-    var $el = $('<li>').addClass('log').attr("id", message).text(message).css('color', getUsernameColor(message));
+    var $el = $('<li>').addClass('log').attr("id", message).text(message).css({
+      color: getUsernameColor(message),
+    });
     addMessageElement($el, options);
   }
 
@@ -141,7 +143,7 @@ $(function() {
     } else {
       $messages.append($el);
     }
-    $messages[0].scrollTop = $messages[0].scrollHeight;
+    //$messages[0].scrollTop = $messages[0].scrollHeight;
   }
 
   // Callback function that removes element
@@ -224,7 +226,7 @@ $(function() {
   function drawCircle(display, id, username) {
     // If new position is in viewport
     if (!isElementInViewport(display)) {
-      $('#circle'+id).show();
+      $('#circle'+id).show(); 
       //console.log("THIS AIN'T IN THE VIEWPORT")
       // If using jquery
       if (typeof jQuery === "function" && display instanceof jQuery) {
@@ -271,7 +273,7 @@ $(function() {
           tag.setAttribute("maxlength", MAX_CHARS)
   
           sentmsgs.push({ID: tag.id, username: username});
-          console.log(sentmsgs);
+          //console.log(sentmsgs);
   
           tag.style.cssText = `
             position: absolute;
@@ -292,7 +294,7 @@ $(function() {
           
           
           // User is typing a message
-          $("#" + tag.id).keyup(function() {
+          $("#" + tag.id).on('keyup keydown', function() {
             this.style.width = ((this.value.length + 1) * 8) + 'px'; // could make a function to fine tune input box
             var value = tag.value;
             var iden = tag.id;
@@ -398,18 +400,18 @@ $(function() {
   }
 
    //Listening for new_position
-   socket.on("new_position", (data) => {
-     recievedmsgs.push({ID: data.id, username: data.username});
-      var display = $("<p>|</p>").attr('id', data.id)
-      console.log('Current ID is: ' + display.attr('id'));
-      console.log(recievedmsgs);
-      
-      $("body").append(
-         $(display).css({
-            position:'absolute',
-            left: data.left,
-            top: data.top
-         }))
+  socket.on("new_position", (data) => {
+    recievedmsgs.push({ID: data.id, username: data.username});
+    var display = $("<p>|</p>").attr('id', data.id)
+    //console.log('Current ID is: ' + display.attr('id'));
+    //console.log(recievedmsgs);
+    
+    $("body").append(
+      $(display).css({
+        position:'absolute',
+        left: data.left,
+        top: data.top
+      }))
 
     // If previous element is empty, remove it
     if (recievedmsgs.length > 1) {
@@ -428,7 +430,7 @@ $(function() {
     //clearTimeout(rtimeout);
     $("#" + data.id).text(data.inputToAdd).css('color', getUsernameColor(data.username));
     rupdateTyping(data.id);
-    drawCircle($("#" + data.id), data.id, data.username);
+    //drawCircle($("#" + data.id), data.id, data.username);
     /*
     var rtimeout = setTimeout(() => {
       removeElem(data.id);
@@ -484,9 +486,9 @@ $(function() {
   $(document).on ({ 
     'mousemove': function(e) {
           clicked && updateScrollPos(e);
-          for (i=0; i < recievedmsgs.length; i++) {
-            drawCircle($("#" + recievedmsgs[i]['ID']), recievedmsgs[i]['ID'], recievedmsgs[i]['username'])
-          }
+          //for (i=0; i < recievedmsgs.length; i++) {
+          //  drawCircle($("#" + recievedmsgs[i]['ID']), recievedmsgs[i]['ID'], recievedmsgs[i]['username'])
+          //}
       },
       'mousedown': function(e) {
           distance = 0;  

@@ -80,16 +80,19 @@ iframe {
 }
 
 .usersOnline {
-  top: 20px;
+  top: 0px;
   right: 1.25rem;
   position:fixed;
   display: inline-block;
   width: 170px;
   height: 200px;
+  z-index: 1;
+  padding: 15px 15px;
 }
 
 /* Only for the "People Online" message. Make better imp. */
 .online {
+  margin: 0px;
   list-style: none;
   font-weight: bold;
   color: gray;
@@ -172,6 +175,7 @@ iframe {
 /* Font */
 
 .messages {
+  margin-top:0px;
   font-size: 150%;
   overflow: auto;
   max-height: 150px;
