@@ -51,5 +51,27 @@ describe("socketio server tests", function(){
         });
         done();
 	});
+
+    it('Test emit `new_position` message', function(done) {
+        const senderX = "12345";
+        const senderY = "54321";
+
+        sender.emit('new_position', {left: senderX, right: senderY})
+		receiver.on('new_position', (data) => {
+            expect(data.left).to.equal(senderX, "Input left-coord recieved should be the same as sent")
+            expect(data.right).to.equal(senderY, "Input right-coord recieved should be the same as sent")
+        });
+        done();
+	});
+
+    it('Test emit `remove elem` message', function(done) {
+        const senderIdValue = "12345";
+
+        sender.emit('remove elem', {idValue: senderIdValue})
+		receiver.on('remove elem', (data) => {
+            expect(data.idValue).to.equal(senderIdValue, "Input id recieved should be the same as sent")
+        });
+        done();
+	});
 })
 
