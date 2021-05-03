@@ -1,7 +1,9 @@
-const expect = require('chai').expect;
-const socketAPI = require('../socketAPI');
-const http = require('http');
-const io = socketAPI.io;
+let expect = require('chai').expect
+    , socketAPI = require('../socketAPI')
+    , http = require('http')
+    , io = socketAPI.io
+    , sender
+    , receiver
 
 describe("socketio server tests", function(){
     let server = undefined;
@@ -22,10 +24,21 @@ describe("socketio server tests", function(){
 		}
 	});
 
-    it('Initial test', function(done) {
-		const sender = require('socket.io-client')('http://localhost:4242/');
-        const receiver = require('socket.io-client')('http://localhost:4242/');
-        
+    beforeEach(function(done){
+        // Create two clients
+		sender = require('socket.io-client')('http://localhost:4242/');
+        receiver = require('socket.io-client')('http://localhost:4242/');
+        done()
+    })
+
+    afterEach(function(done){
+        // Disconnect clients
+        sender.disconnect()
+        receiver.disconnect()
+        done()
+    })
+
+    it('Test emit `new_message` message', function(done) {
         const senderInput = "hello";
         const senderId = "1234";
         const senderUsername = "sender"
