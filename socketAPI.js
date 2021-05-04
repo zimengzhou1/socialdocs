@@ -9,8 +9,6 @@ var usernames = [];
 
 // Listen on every connection
 io.on('connection', (socket) => {
-    console.log('New user connected')
-
     var addedUser = false;
     socket.on('add_user', (username) => {
         if (addedUser) return;
